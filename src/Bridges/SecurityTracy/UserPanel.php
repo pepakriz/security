@@ -35,7 +35,13 @@ class UserPanel extends Nette\Object implements Tracy\IBarPanel
 	public function getTab()
 	{
 		if (headers_sent()) {
-			return;
+			if (PHP_VERSION >= 50400) {
+				if (session_status() !== PHP_SESSION_ACTIVE) {
+					return;
+				}
+			} elseif (session_id() === '') {
+				return;
+			}
 		}
 
 		ob_start();
